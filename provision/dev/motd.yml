@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - stat: path=/etc/update-motd.d/00-motd
+    register: motd
+
+  - name: Delete motd conf directory
+    file: path=/etc/update-motd.d state=absent
+    when: motd.stat.exists == false
+
+  - name: Create motd conf directory
+    file: path=/etc/update-motd.d state=directory
+
+  - name: Add motd shell script
+    copy:
+      src: resources/motd.sh
+      dest: /etc/update-motd.d/00-motd
+      mode: "u=rwx,g=rx,o=x"

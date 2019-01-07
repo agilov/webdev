@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Purge Apache2
+    apt:
+      name: apache2
+      state: absent
+
+  - name: Install Nginx
+    apt: name=nginx update_cache=yes state=latest
+
+  - name: Configure Nginx user
+    notify: Restart Nginx
+    replace:
+      path:  "/etc/nginx/nginx.conf"
+      regexp: "www-data"
+      replace: "vagrant"
+
+  # Fix Truncated JS or CSS files problem
+  # Read http://smotko.si/nginx-static-file-problem/
+  # https://www.reddit.com/r/linux/comments/12ssxq/i_ran_into_a_really_strange_issue_with_nginx_and/c6xvzv3/
+  - name: Fix truncated static files problem (sendfile and samba)
+    notify: Restart Nginx
+    replace:
+      path: /etc/nginx/nginx.conf
+      regexp: "sendfile on"
+      replace: "sendfile off"
+
+  - name: Install joke
+    copy:
+      src: resources/index.html
+      dest: /var/www/html/index.html
+
+  - name: Install joke gif
+    copy:
+      src: resources/nginx.gif
+      dest: /var/www/html/nginx.gif
+
+  handlers:
+  - name: Restart Nginx
+    service:
+      name: nginx
+      state: restarted

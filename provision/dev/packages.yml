@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+
+  - name: Install general development packages
+    apt:
+      name: ['zip', 'unzip', 'mc', 'git']
+      state: latest
+      update_cache: yes

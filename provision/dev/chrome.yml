@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Chrome | Install apt key
+    apt_key:
+      url: https://dl-ssl.google.com/linux/linux_signing_key.pub
+      state: present
+
+  - name: Chrome | Install repository
+    apt_repository:
+      repo: deb https://dl.google.com/linux/chrome/deb/ stable main
+      state: present
+
+  - name: Chrome | Install package
+    apt:
+      update_cache: yes
+      name: google-chrome-stable
+      state: present
+
+  - name: Chrome | Install chromedriver globally
+    unarchive:
+      src: http://chromedriver.storage.googleapis.com/2.45/chromedriver_linux64.zip
+      dest: /usr/local/bin
+      creates: /usr/local/bin/chromedriver
+      remote_src: yes

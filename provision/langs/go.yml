@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+
+  - name: Install GO
+    apt:
+      name: golang-go
+      state: latest
+      update_cache: yes

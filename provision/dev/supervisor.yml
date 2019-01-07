@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install Supervisor
+    apt: name=supervisor update_cache=yes state=latest
+
+  - name: Enable and start supervisor service
+    service:
+      name: supervisor
+      state: started
+      enabled: yes

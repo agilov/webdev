@@ -1,0 +1,38 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    phpversion: "7.1"
+    xdebug_ini: "/etc/php/{{ phpversion }}/mods-available/xdebug.ini"
+  tasks:
+  - name: "PHP | Install xdebug"
+    apt:
+      state: latest
+      update_cache: yes
+      name: php-xdebug
+
+  - name: PHP | Configure xdebug
+    notify: Restart PHP-FPM
+    ini_file:
+      path: "{{ xdebug_ini }}"
+      section: ""
+      option: "{{ item.option }}"
+      value: "{{ item.value }}"
+      backup: no
+    with_items:
+    - { option: 'zend_extension', value: 'xdebug.so'}
+    - { option: 'xdebug.remote_autostart', value: '1'}
+    - { option: 'xdebug.remote_enable', value: '1'}
+    - { option: 'xdebug.remote_connect_back', value: '1'}
+    - { option: 'xdebug.remote_handler', value: 'dbgp'}
+    - { option: 'xdebug.remote_host', value: '192.168.56.1'}
+    - { option: 'xdebug.remote_port', value: '9000'}
+    - { option: 'xdebug.remote_mode', value: 'req'}
+    - { option: 'xdebug.idekey', value: 'PHPSTORM'}
+
+  handlers:
+  - name: Restart PHP-FPM
+    service:
+      name: "php{{ phpversion }}-fpm"
+      state: restarted
+

@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Clickhouse | Install apt key
+    apt_key:
+      keyserver: keyserver.ubuntu.com
+      id: E0C56BD4
+      state: present
+
+  - name: Clickhouse | Install repository
+    apt_repository:
+      repo: deb http://repo.yandex.ru/clickhouse/deb/stable/ main/
+      state: present
+
+  - name: Clickhouse | Install server and client
+    notify: Restart clickhouse
+    apt:
+      update_cache: yes
+      name: ['clickhouse-server-common', 'clickhouse-client']
+      state: present
+
+  handlers:
+  - name: Restart clickhouse
+    service:
+      name: clickhouse-server
+      state: restarted

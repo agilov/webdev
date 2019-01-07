@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+
+  - name: Install Java (Open JDK)
+    apt:
+      name: openjdk-8-jre-headless
+      state: latest
+      update_cache: yes

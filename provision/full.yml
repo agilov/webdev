@@ -1,0 +1,23 @@
+---
+# DEV
+- import_playbook: dev/motd.yml
+- import_playbook: dev/packages.yml
+- import_playbook: dev/supervisor.yml
+- import_playbook: dev/nginx.yml
+- import_playbook: dev/chrome.yml
+
+# Databases
+- import_playbook: db/pg.yml
+- import_playbook: db/redis.yml
+- import_playbook: db/memcached.yml
+- import_playbook: db/clickhouse.yml
+
+# PHP
+- import_playbook: php/php.yml phpversion=7.2
+- import_playbook: php/composer.yml
+- import_playbook: php/xdebug.yml phpversion=7.2
+
+# Languages
+- import_playbook: langs/go.yml
+- import_playbook: langs/java.yml
+- import_playbook: langs/python3.yml

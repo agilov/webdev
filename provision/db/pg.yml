@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install Postgresql
+    apt:
+      name: ['postgresql', 'libpq-dev', 'python-psycopg2']
+      state: latest
+      update_cache: yes
+
+  - name: Set trust to all md5 or peer connections
+    notify: Restart Postgresql
+    replace:
+      path: /etc/postgresql/10/main/pg_hba.conf
+      regexp: 'md5|peer'
+      replace: 'trust'
+
+  - name: Let database users connect from outside
+    notify: Restart Postgresql
+    replace:
+      path: /etc/postgresql/10/main/pg_hba.conf
+      regexp: "127.0.0.1/32"
+      replace: "0.0.0.0/0"
+
+  - name: Open postgresql for external connections
+    notify: Restart Postgresql
+    replace:
+      path: /etc/postgresql/10/main/postgresql.conf
+      regexp: "#listen_addresses = 'localhost'"
+      replace: "listen_addresses = '*'"
+
+  handlers:
+  - name: Restart Postgresql
+    service:
+      name: postgresql
+      state: restarted

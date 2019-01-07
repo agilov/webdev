@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install Python 3
+    apt:
+      name: ['python3', 'python3-pip']
+      state: latest
+      update_cache: yes

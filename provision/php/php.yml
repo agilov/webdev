@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    phpversion: "7.1"
+    ini_file: "/etc/php/{{ phpversion }}/fpm/php.ini"
+    pool_conf_file: "/etc/php/{{ phpversion }}/fpm/pool.d/www.conf"
+  tasks:
+  - name: "PHP | Install PHP {{ phpversion }}"
+    apt: "pkg=php{{ phpversion }} state=latest"
+
+  - name: "PHP | Install PHP {{ phpversion }} Modules"
+    apt:
+      state: latest
+      update_cache: yes
+      name: [
+        'php{{ phpversion }}-cli',
+        'php{{ phpversion }}-fpm',
+        'php{{ phpversion }}-pgsql',
+        'php{{ phpversion }}-opcache',
+        'php{{ phpversion }}-intl',
+        'php{{ phpversion }}-gd',
+        'php{{ phpversion }}-zip',
+        'php{{ phpversion }}-json',
+        'php{{ phpversion }}-memcached',
+        'php{{ phpversion }}-redis',
+        'php{{ phpversion }}-mbstring',
+        'php{{ phpversion }}-curl',
+        'php{{ phpversion }}-odbc',
+        'php{{ phpversion }}-xml'
+      ]
+
+  - name: PHP | Configure PHP-FPM pool user
+    notify: Restart PHP-FPM
+    ini_file:
+      path: "{{ item.file }}"
+      section: "{{ item.section }}"
+      option: "{{ item.option }}"
+      value: "{{ item.value }}"
+      backup: no
+    with_items:
+    # Vagrant user
+    - { file: '{{ pool_conf_file }}', section: 'www', option: 'listen.owner', value: vagrant}
+    - { file: '{{ pool_conf_file }}', section: 'www', option: 'listen.group', value: vagrant}
+    - { file: '{{ pool_conf_file }}', section: 'www', option: 'user', value: vagrant}
+    - { file: '{{ pool_conf_file }}', section: 'www', option: 'group', value: vagrant}
+
+    # POST
+    - { file: '{{ ini_file }}', section: 'PHP', option: 'post_max_size', value: '128M'}
+    - { file: '{{ ini_file }}', section: 'PHP', option: 'post_max_size', value: '128M'}
+
+    # DEV
+    - { file: '{{ ini_file }}', section: 'PHP', option: 'error_reporting', value: 'E_ALL'}
+    - { file: '{{ ini_file }}', section: 'PHP', option: 'display_errors', value: 'On'}
+    - { file: '{{ ini_file }}', section: 'PHP', option: 'memory_limit', value: '1G'}
+    - { file: '{{ ini_file }}', section: 'PHP', option: 'cgi.fix_pathinfo', value: '0'}
+
+  handlers:
+  - name: Restart PHP-FPM
+    service:
+      name: "php{{ phpversion }}-fpm"
+      state: restarted

@@ -1,0 +1,28 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+    config.vm.box = "ubuntu/bionic64"
+    config.vm.hostname = 'webdev'
+
+    config.vm.network "private_network", ip: "192.168.56.110"
+    config.ssh.insert_key = false
+
+    config.vm.provider "virtualbox" do |vb|
+     vb.gui = false
+     vb.name = "webdev"
+     vb.cpus = 2
+     vb.memory = 2048
+    end
+
+    # Run Ansible provision
+    config.vm.provision "ansible_local" do |ansible|
+        ansible.playbook = "provision/full.yml"
+        ansible.compatibility_mode = "2.0"
+    end
+
+    #config.vm.synced_folder "/path/to/my/hakz", "/home/vagrant/hakz"
+    #config.vm.synced_folder "/path/to/my/another/hakz", "/home/vagrant/hakz2"
+
+end
