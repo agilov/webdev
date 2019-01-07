@@ -6,6 +6,8 @@ Main backend language is PHP 7.2
 
 Besides PHP also provided: NodeJS (with yarn and npm), Python3 (with PIP3), Golang
 
+If you are not familiar with Vagrant: [RTFD](https://www.vagrantup.com/docs/index.html) 
+
 ## Usage
 
 #### Prepare box and Vagrantfile
@@ -87,4 +89,4 @@ PostgreSQL server also available on 192.168.56.110:5432 with user postgres (no p
 
 More information about software (full list and exact versions) you can see on SSH startup message.
 
-
+[Read more about web development](http://bfy.tw/Lfry)
