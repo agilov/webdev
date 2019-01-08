@@ -25,7 +25,7 @@ Uncomment and change config.vm.synced_folder directives to setup your dev shared
 
 Also you can change everything in Vagrantfile (cpus, memory etc.) Vagrantfile is gitignored.
 
-If you don't want to install some packages - comment out unwanted playbooks in provision/full.yml fileю
+If you don't want to install some packages - comment out unwanted playbooks in provision/full.yml file
 
 
 #### Run vagrant
